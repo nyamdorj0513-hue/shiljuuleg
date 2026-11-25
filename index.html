@@ -66,6 +66,7 @@
     $('unlockBtn').classList.toggle('hide', mode !== 'unlock');
     $('setupBtn').classList.toggle('hide', mode !== 'setup');
     $('skipBtn').classList.toggle('hide', mode !== 'setup');
+    $('codeBtn').classList.toggle('hide', mode !== 'unlock');
     $('lockText').textContent = mode === 'setup'
       ? 'Дараагийн удаагаас апп-аа царай таниулж (Face ID) нээх үү?'
       : 'Царай таниулж нээнэ үү';
@@ -94,6 +95,7 @@
     $('lockMsg').textContent = '';
     const opts = { challenge: rand(32), userVerification: 'required', timeout: 60000, rpId: location.hostname };
     try {
+      const t = setTimeout(() => { $('lockMsg').textContent = 'Face ID хариу өгөхгүй байна. Доорх "Кодоор нээх"-ийг дарна уу.'; }, 15000);
       await navigator.credentials.get({ publicKey: Object.assign({ allowCredentials: [{ type: 'public-key', id: unb64(ls.get('fidCred')) }] }, opts) });
       return openApp();
     } catch (e1) {
