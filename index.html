@@ -104,6 +104,12 @@
     }
   }
 
+  window.addEventListener('message', (e) => {
+    if (!/^https:\/\/[a-z0-9-]+\.googleusercontent\.com$/.test(e.origin) || !e.data) return;
+    if (e.data.t === 'txNeed' && e.source) e.source.postMessage({ t: 'txCode', code: ls.get('txCode') }, e.origin);
+    if (e.data.t === 'txCode') ls.set('txCode', String(e.data.code || ''));
+  });
+
   $('unlockBtn').onclick = unlock;
   $('setupBtn').onclick = setup;
   $('skipBtn').onclick = () => { openApp(); };
