@@ -114,6 +114,7 @@
     if (!/^https:\/\/[a-z0-9-]+\.googleusercontent\.com$/.test(e.origin) || !e.data) return;
     if (e.data.t === 'txNeed' && e.source) e.source.postMessage({ t: 'txCode', code: ls.get('txCode') }, e.origin);
     if (e.data.t === 'txCode') ls.set('txCode', String(e.data.code || ''));
+    if (e.data.t === 'reload') { const f = document.querySelector('iframe'); if (f) { $('loading').style.display = 'flex'; f.src = APP + '?r=' + Date.now(); } }
   });
 
   $('unlockBtn').onclick = unlock;
