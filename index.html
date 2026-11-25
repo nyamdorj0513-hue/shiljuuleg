@@ -35,6 +35,7 @@
   <p id="lockText">Царай таниулж нээнэ үү</p>
   <button id="unlockBtn" type="button">🙂 Face ID-аар нээх</button>
   <button id="setupBtn" class="hide" type="button">🙂 Face ID тохируулах</button>
+  <button id="codeBtn" class="ghost hide" type="button">Кодоор нээх</button>
   <button id="skipBtn" class="ghost hide" type="button">Дараа тохируулах</button>
   <div id="lockMsg"></div>
 </div>
@@ -91,18 +92,21 @@
 
   async function unlock() {
     $('lockMsg').textContent = '';
+    const opts = { challenge: rand(32), userVerification: 'required', timeout: 60000, rpId: location.hostname };
     try {
-      await navigator.credentials.get({ publicKey: {
-        challenge: rand(32),
-        allowCredentials: [{ type: 'public-key', id: unb64(ls.get('fidCred')) }],
-        userVerification: 'required',
-        timeout: 60000
-      }});
-      openApp();
-    } catch (e) {
-      $('lockMsg').textContent = 'Таньж чадсангүй. Дахин оролдоно уу.';
+      await navigator.credentials.get({ publicKey: Object.assign({ allowCredentials: [{ type: 'public-key', id: unb64(ls.get('fidCred')) }] }, opts) });
+      return openApp();
+    } catch (e1) {
+      try {
+        await navigator.credentials.get({ publicKey: opts });
+        return openApp();
+      } catch (e) {
+        $('lockMsg').textContent = 'Таньж чадсангүй (' + (e && e.name || 'алдаа') + '). Дахин оролдох эсвэл кодоор нээнэ үү.';
+        $('codeBtn').classList.remove('hide');
+      }
     }
   }
+  $('codeBtn').onclick = () => { ls.set('fidCred', ''); ls.set('txCode', ''); openApp(); };
 
   window.addEventListener('message', (e) => {
     if (!/^https:\/\/[a-z0-9-]+\.googleusercontent\.com$/.test(e.origin) || !e.data) return;
