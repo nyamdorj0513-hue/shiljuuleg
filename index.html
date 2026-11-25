@@ -77,7 +77,7 @@
       ls.set('fidSkip', '');
       openApp();
     } catch (e) {
-      $('lockMsg').textContent = 'Тохируулж чадсангүй. Дахин оролдоно уу.';
+      $('lockMsg').textContent = 'Тохируулж чадсангүй. iPhone: Settings → General → AutoFill & Passwords → Passwords-ийг асаагаад дахин оролдоно уу.';
     }
   }
 
@@ -98,14 +98,13 @@
 
   $('unlockBtn').onclick = unlock;
   $('setupBtn').onclick = setup;
-  $('skipBtn').onclick = () => { ls.set('fidSkip', '1'); openApp(); };
+  $('skipBtn').onclick = () => { openApp(); };
 
   (async () => {
     let ok = false;
     try { ok = !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); } catch (e) {}
     if (!ok) return openApp();
     if (ls.get('fidCred')) return showLock('unlock');
-    if (ls.get('fidSkip')) return openApp();
     showLock('setup');
   })();
 
