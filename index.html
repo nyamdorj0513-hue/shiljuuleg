@@ -21,9 +21,14 @@
   #lock .ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.6); font-weight: 400; font-size: 15px; padding: 10px 18px; }
   #lockMsg { min-height: 20px; font-size: 14px; }
   .hide { display: none !important; }
+  #loading { position: fixed; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; color: #374151; font-size: 16px; text-align: center; padding: 24px; }
+  #loading .spin { width: 36px; height: 36px; border: 4px solid #d1d5db; border-top-color: #15803d; border-radius: 50%; animation: sp 1s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+  #loading a { color: #15803d; font-weight: 700; font-size: 16px; }
 </style>
 </head>
 <body>
+<div id="loading"><div class="spin"></div><div>Ачаалж байна…</div><a id="direct" class="hide" href="#">Удаж байна уу? Энд дарж шууд нээх</a></div>
 <div id="lock">
   <img src="icon-192.png" alt="">
   <h1>Шилжүүлэг</h1>
@@ -46,9 +51,12 @@
 
   function openApp() {
     $('lock').style.display = 'none';
+    $('loading').style.display = 'flex';
+    $('direct').href = APP;
+    setTimeout(() => $('direct').classList.remove('hide'), 15000);
     if (!document.querySelector('iframe')) {
       const f = document.createElement('iframe');
-      f.src = APP; f.title = 'Шилжүүлэг'; f.allow = 'camera; clipboard-write';
+      f.onload = () => setTimeout(() => { $('loading').style.display = 'none'; }, 800); f.src = APP; f.title = 'Шилжүүлэг'; f.allow = 'camera; clipboard-write';
       document.body.appendChild(f);
     }
   }
